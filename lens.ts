@@ -126,8 +126,11 @@ export function pipe(...fns: Array<lens<any, any>>): lens<any, any> {
 export class Lens<S, T> implements lens<S, T> {
   constructor(
     public view: (store: S) => T,
-    public set: (store: S, value: T) => S
-  ) {}
+    public set: (store: S, value: T) => S 
+    ) {}  
+  public static Create<T>()   {
+    return Lens.From(identity<T>())
+  }
   public static From<S, T>(lens: lens<S, T>) {
     return new Lens<S, T>(lens.view, lens.set);
   }
@@ -226,7 +229,7 @@ export class Lens<S, T> implements lens<S, T> {
 
   public pipe(...l: lens<any, any>[]): Lens<any, any> {
     let inner = pipeFromArray([this, ...l]);
-    return new Lens(inner.view, inner.set);
+    return Lens.From(inner);
   }
 }
 
@@ -321,5 +324,10 @@ export const nil = <T>(): lens<T, T> => ({
   set: (s, _) => s
 });
 
-export const iff = <T>(statement: boolean): lens<T, T> =>
-  statement ? identity() : nil();
+export const iff = <T>(statement: boolean | ((item:T) => boolean) ): lens<T, T> =>
+  typeof(statement) == 'boolean' ?
+    statement ? identity() : nil() :
+    { view: s => statement(s) ? s : undefined,
+      set: (s,item) => statement(s) ? item : s
+    }
+

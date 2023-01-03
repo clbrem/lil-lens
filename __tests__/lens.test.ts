@@ -8,6 +8,8 @@ import {
   grouped,
   toGrouped,
   mergeApply,
+  iff,
+  defaultArray,
   setMany
 } from "../lens";
 
@@ -36,6 +38,11 @@ const nesting: TestType = {
   b: "nested",
   inner: testing
 };
+const nestnesting: TestType ={
+  a: 0,
+  b: "nest-nesting",
+  inner: nesting
+}
 const containing = {
   contained: testing
 };
@@ -115,6 +122,15 @@ test("Test pipe", () => {
   );
   expect(l.view(nesting)).toBe(1);
 });
+test("Test iff",() => {
+  let l = start<TestType>().pipe(
+    field("inner"),
+    iff(item => !!item),
+    field("inner"),
+    field("a")
+  );  
+  expect(l.view(nestnesting)).toBe(1);
+})
 
 function lensTestPrimitive<S, T>(
   l: lens<S, T>,
