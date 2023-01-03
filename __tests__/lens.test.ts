@@ -129,9 +129,8 @@ function lensTestPrimitive<S, T>(
   expect(l.view(l.set(store, l.view(store)))).toBe(l.view(store));
 }
 
-function willFail() {
-  expect (false).toBe(true);
-}
+test("willFail",() => expect (false).toBe(true));
+
 
 // function lensTestObject<S, T>(
 //   l: lens<S, T>,
