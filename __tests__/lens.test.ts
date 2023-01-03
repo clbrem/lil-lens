@@ -148,18 +148,7 @@ function lensTestPrimitive<S, T>(
 
 
 
-// function lensTestObject<S, T>(
-//   l: lens<S, T>,
-//   store: S,
-//   value: T,
-//   secondValue: T
-// ) {
-//   expect(l.view(l.set(store, value))).toMatchObject(value);
-//   expect(l.view(l.set(l.set(store, secondValue), value))).toMatchObject(
-//     l.view(l.set(store, value))
-//   );
-//   expect(l.view(l.set(store, l.view(store)))).toMatchObject(l.view(store));
-// }
+
 
 test("Test Lens Properties", () => {
   lensTestPrimitive(pushPeek<number>(), [1, 2, 3], 1, 2);
