@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "tsc": "tsc",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "pretty-quick": "pretty-quick"
   },
   "husky": {
     "hooks": {
