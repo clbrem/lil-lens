@@ -272,7 +272,7 @@ export const pushPeek = <T>(): Lens<T[], T | undefined> =>
   );
 
 export const start = <T>(): Lens<T, T> =>
-  new Lens(store => store, (_, value) => value);
+  Lens.Create<T>();
 
 export const from = <S, T>(
   getter: (store: S) => T,
@@ -308,11 +308,14 @@ export const mapKey = <V>(
       typeof v === "undefined" ? map : { ...map, [key]: v }
   );
 
+  export const group = 
+  <T>(key: string) =>
+    mapKey<T[]>(key).pipe(
+      defaultArray()
+    );
 export const grouped = <T>(key: string) =>
-  mapKey<T[]>(key).pipe(
-    defaultArray(),
-    pushPeek()
-  );
+  group<T>(key).pipe(pushPeek())
+  
 
 export const toGrouped = <T>(fn: (item: T) => string) => (items: T[]) =>
   items.reduce((acc, item) => grouped<T>(fn(item)).set(acc, item), {} as {

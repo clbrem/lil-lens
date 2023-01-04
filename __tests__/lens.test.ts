@@ -6,6 +6,7 @@ import {
   pushPeek,
   lens,
   grouped,
+  group,
   toGrouped,
   mergeApply,
   iff,
@@ -158,6 +159,7 @@ test("Test Lens Properties", () => {
 test("Test Grouped", () => {
   let t = toGrouped((x: number) => `${x % 3}`)([1, 2, 3, 4, 5]);
   expect(grouped("1").view(t)).toEqual(4);
+  expect(group("1").view(t)).toHaveLength(2);
 });
 test("Test MergeApply", () => {
   let out = mergeApply<number, { arrayed: number[] }, number[]>(
