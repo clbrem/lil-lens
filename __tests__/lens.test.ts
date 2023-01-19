@@ -10,8 +10,7 @@ import {
   toGrouped,
   mergeApply,
   iff,
-  defaultArray,
-  setMany
+  defaultArray
 } from "../lens";
 
 type TestType = {
@@ -28,30 +27,30 @@ type ArrayContainer = {
 
 const notTesting: TestType = {
   a: 2,
-  b: "notTested"
+  b: "notTested",
 };
 const testing: TestType = {
   a: 1,
-  b: "tested"
+  b: "tested",
 };
 const nesting: TestType = {
   a: 2,
   b: "nested",
-  inner: testing
+  inner: testing,
 };
-const nestnesting: TestType ={
+const nestnesting: TestType = {
   a: 0,
   b: "nest-nesting",
-  inner: nesting
-}
+  inner: nesting,
+};
 const containing = {
-  contained: testing
+  contained: testing,
 };
 
 const array = [1, 2, 3, 4, 5];
 
 const arraying = {
-  arrayed: array
+  arrayed: array,
 };
 const a = field<TestType, "a">("a");
 const contained = field<Container, "contained">("contained");
@@ -115,6 +114,7 @@ test("Test pushPeek", () => {
   expect(pp.view([])).toBeUndefined();
   expect(pp.set([], 1)).toMatchObject([1]);
 });
+
 test("Test pipe", () => {
   let l = start<TestType>().pipe(
     field("inner"),
@@ -123,15 +123,16 @@ test("Test pipe", () => {
   );
   expect(l.view(nesting)).toBe(1);
 });
-test("Test iff",() => {
+
+test("Test iff", () => {
   let l = start<TestType>().pipe(
     field("inner"),
-    iff(item => !!item),
+    iff((item) => !!item),
     field("inner"),
     field("a")
-  );  
+  );
   expect(l.view(nestnesting)).toBe(1);
-})
+});
 
 function lensTestPrimitive<S, T>(
   l: lens<S, T>,
@@ -146,11 +147,6 @@ function lensTestPrimitive<S, T>(
   expect(l.view(l.set(store, l.view(store)))).toBe(l.view(store));
 }
 
-
-
-
-
-
 test("Test Lens Properties", () => {
   lensTestPrimitive(pushPeek<number>(), [1, 2, 3], 1, 2);
   lensTestPrimitive(pushPeek<number>(), [], 2, 1);
@@ -161,6 +157,7 @@ test("Test Grouped", () => {
   expect(grouped("1").view(t)).toEqual(4);
   expect(group("1").view(t)).toHaveLength(2);
 });
+
 test("Test MergeApply", () => {
   let out = mergeApply<number, { arrayed: number[] }, number[]>(
     pushPeek<number>().set,
@@ -169,10 +166,43 @@ test("Test MergeApply", () => {
   )(field("arrayed"))(arraying, 2);
   expect(out.arrayed).toMatchObject([2, 2, 3, 2, 5, 2]);
 });
+
 test("Test MergeApplyWithSetMany", () => {
   let out = field<ArrayContainer, "arrayed">("arrayed").mergeApply(
-    pushPeek<number>().setMany<number>(i => i ** 2),
-    index<number>(0).setApply(item => item.reduce((acc, curr) => acc + curr))
+    pushPeek<number>().setMany<number>((i) => i ** 2),
+    index<number>(0).setApply((item) => item.reduce((acc, curr) => acc + curr))
   )(arraying, [1, 2, 3, 4]);
   expect(out.arrayed).toMatchObject([10, 2, 3, 4, 5, 1, 4, 9, 16]);
 });
+
+type InnerAwfulType = {
+  innerEntryNumber: number;
+  innerEntryString: string;
+};
+
+type AwfulType = {
+  entry?: {
+    items?: {
+      auditId?: number;
+      items?: InnerAwfulType[] | undefined;
+    };
+  };
+};
+
+test("Can Traverse Awful Type", () => {
+  let firstItem = start<AwfulType>().pipe(
+    field("entry"),
+    field("items"),
+    field("items"),    
+    defaultArray(),
+    pushPeek()
+  );
+  let myItem = firstItem.set(
+    { entry: { items: { auditId: 1 } } },
+    { innerEntryNumber: 1, innerEntryString: "hi" }
+  );
+
+
+  
+});
+
