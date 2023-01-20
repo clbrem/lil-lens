@@ -11,7 +11,7 @@ import {
   mergeApply,
   iff,
   defaultArray
-} from "../lens";
+} from "../lens"
 
 type TestType = {
   a: number;

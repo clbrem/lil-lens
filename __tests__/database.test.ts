@@ -1,8 +1,8 @@
-import { bulk, row, table, Database } from "../database";
-import { start, field } from "../lens";
+import { bulk, row, table, Database } from "../database"
+import { start, field } from "../lens"
 
 test("Can create database", () => {
-  let context = start<Database>();
+  let context = start<Database>()
   let MyTable = context.pipe(table("MyTable"));
   let MyOtherTable = context.pipe(table("MyOtherTable"));
   let db: Database = {};
