@@ -241,6 +241,8 @@ export const field = <S extends object, K extends keyof S>(
     (store: S, value: S[K]) => ({ ...store, [name]: value } as S)
   );
 
+
+
 export const index = <S>(id: number): Lens<S[], S> =>
   new Lens(
     (item: S[]) => item[id],

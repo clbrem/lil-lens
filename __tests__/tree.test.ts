@@ -5,8 +5,7 @@ test(
     "Can Create Tree", 
     () => {
         let tree = 
-            key.set(root(""), "myTree")
-        console.log(tree);
+            key.set(root(""), "myTree")        
     }
 )
 test(
@@ -15,7 +14,6 @@ test(
         let myBigtree = 
           leaf
           .pipe(withDefault(root("")))
-          .setMany(root)(root(""), ["hi", "there","bud"])
-        console.log(myBigtree)
+          .setMany(root)(root(""), ["hi", "there","bud"])        
     }
 )
