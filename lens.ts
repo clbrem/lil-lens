@@ -336,3 +336,12 @@ export const iff = <T>(statement: boolean | ((item:T) => boolean) ): lens<T, T> 
       set: (s,item) => statement(s) ? item : s
     }
 
+export const bind = <S,T extends object>(v: {[K in keyof T]: lens<S,T[K]>}) =>  
+    {
+      
+      
+      
+    }
+    
+    
+   

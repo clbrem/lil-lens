@@ -68,3 +68,14 @@ export const asString: Lens<JsonObject, null | string> =
             },
             (_, item) => item
     )
+export const asNumber: Lens<JsonObject, null | number> =
+    new Lens(
+        (input: JsonObject) => {
+            if (typeof input === "number") {
+                return input;
+            } else {
+                return null;
+            }
+            },
+            (_, item) => item
+    )
