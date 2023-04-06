@@ -200,9 +200,7 @@ test("Can Traverse Awful Type", () => {
   let myItem = firstItem.set(
     { entry: { items: { auditId: 1 } } },
     { innerEntryNumber: 1, innerEntryString: "hi" }
-  );
-
-
-  
+  );  
 });
+
 
