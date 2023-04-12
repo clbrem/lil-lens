@@ -38,10 +38,7 @@ export const mergeApply =
         )
       : l.set(store, fn(l.view(store), item));
 
-export const forEach =
-  <U, S, T>(fn: (item: T) => T, l: lens<S, T[]>) =>
-  (store: S, items: U[]) =>
-    items;
+
 
 const viewApply =
   <U, S, T>(l: lens<S, T>, fn: (item: T) => U) =>
@@ -249,7 +246,7 @@ export const field = <S extends object, K extends keyof S>(
 ): Lens<S, S[K]> =>
   new Lens(
     (store: S) => store[name],
-    (store: S, value: S[K]) => ({ ...store, [name]: value } as S)
+    (store: S, value: S[typeof name]) => ({ ...store, [name]: value } as S)
   );
 
 export const index = <S>(id: number): Lens<S[], S> =>
@@ -352,28 +349,30 @@ export const iff = <T>(
       };
 type Lensed<S, T> = { [K in keyof T]: lens<S, T[K]> };
 
-export const bind = <S extends object, T extends object>(v: Lensed<S,T>) => ({
-  view: appliedView<S,T>(v),
-  set: appliedSet<S,T>(v)
+export const bind = <S extends object, T extends object>(v: Lensed<S, T>) => ({
+  view: appliedView<S, T>(v),
+  set: appliedSet<S, T>(v),
 });
 
-
 function singletonView<S, T, K extends keyof T>(lensed: Lensed<S, T>) {
-  return (s: S) => (k: K) =>
-    ({ [k]: lensed[k].view(s) } as { [key in K]: T[K] });
+  return (s: S) => (ks: K[]) =>
+    ks.map((k) => [k, lensed[k].view(s)]) as Iterable<readonly [K, T[K]]>;
 }
 function singletonSet<S, T, K extends keyof T>(lensed: Lensed<S, T>) {
-  return (s: S, t: T[K]) => (k: K) =>
-    lensed[k].set(s,t)
+  return (s: S, t: T[K]) => (k: K) => lensed[k].set(s, t);
 }
-function appliedSet<S extends object,T>(lensed: Lensed<S,T>) : (s: S, t : T) => S {
+function appliedSet<S extends object, T>(
+  lensed: Lensed<S, T>
+): (s: S, t: T) => S {
   let keys = Object.keys(lensed) as (keyof T)[];
-  return (s: S, t: T) => ({...keys.map(k => singletonSet<S,T,typeof k>(lensed)(s, t[k])(k))} as S)
+  return (s: S, t: T) =>
+    ({
+      ...keys.map((k) => singletonSet<S, T, typeof k>(lensed)(s, t[k])(k)),
+    } as S);
 }
 function appliedView<S, T>(lensed: Lensed<S, T>) {
   return (s: S) => {
     let keys = Object.keys(lensed) as (keyof T)[];
-    let a = { ...keys.map(singletonView(lensed)(s)) } as T;
-    return a;
+    return Object.fromEntries(singletonView(lensed)(s)(keys)) as T;
   };
 }
