@@ -22,11 +22,23 @@ export type Database = { [table: string]: Table };
 export const table: (table: string) => Lens<Database, Table> = (
   table: string
 ) => Lens.Create<Database>().pipe(field(table), withDefault(new Map()));
-const undefinedView: (database: Database) => Table = (database: Database) => {throw (new Error())}
-const undefinedSet: (database: Database, _: Table) => Database = (database: Database, _: Table) => {throw (new Error())}
 
-export const join: (left: string, right: string, on: (table: Table) => string|number ) => Lens<Database, Table> = (left, right,on) => 
+const undefinedView: (database: Database) => Table = (database: Database) => {
+  throw new Error();
+};
+const undefinedSet: (database: Database, _: Table) => Database = (
+  database: Database,
+  _: Table
+) => {
+  throw new Error();
+};
+
+export const join: (
+  left: string,
+  right: string,
+  on: (table: Table) => string | number
+) => Lens<Database, Table> = (left, right, on) =>
   Lens.Create<Database>().pipe({
     view: undefinedView,
-    set: undefinedSet
-  })
+    set: undefinedSet,
+  });
